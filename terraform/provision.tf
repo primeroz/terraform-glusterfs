@@ -30,6 +30,11 @@ resource "null_resource" "base_gluster-client" {
         destination = "/tmp/"
     }
 
+    provisioner "file" {
+        source = "config"
+        destination = "/tmp/"
+    }
+
     provisioner "remote-exec" {
       inline = [
         "chmod a+x /tmp/scripts/*.sh",
@@ -67,6 +72,11 @@ resource "null_resource" "base_gluster01" {
         destination = "/tmp/"
     }
 
+    provisioner "file" {
+        source = "config"
+        destination = "/tmp/"
+    }
+
     provisioner "remote-exec" {
       inline = [
         "chmod a+x /tmp/scripts/*.sh",
@@ -101,6 +111,11 @@ resource "null_resource" "base_gluster02" {
 
     provisioner "file" {
         source = "scripts"
+        destination = "/tmp/"
+    }
+
+    provisioner "file" {
+        source = "config"
         destination = "/tmp/"
     }
 
@@ -179,3 +194,26 @@ resource "null_resource" "provision_gluster02" {
 
 }
 
+#
+# CONFIGURE SCRIPTS
+#
+
+resource "null_resource" "configure_mrepo" {
+    depends_on = ["null_resource.provision_gluster-client"]
+    triggers = {
+        instance_id = "${aws_instance.gluster-client.id}"
+    }
+    connection {
+        host = "${aws_instance.gluster-client.public_ip}"
+        user = "${var.ssh_username}"
+        key_file = "${var.ssh_keypath}"
+        agent = false
+    }
+
+    provisioner "remote-exec" {
+      inline = [
+        "/usr/bin/sudo /tmp/scripts/021-configure-mrepo.sh"
+      ]
+    }
+
+}

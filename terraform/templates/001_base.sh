@@ -9,7 +9,7 @@ mv glusterfs-epel.repo /etc/yum.repos.d/
 # update Repos and Packages
 yum -y update
 
-yum -y install vim git augeas sysstat
+yum -y install vim git augeas sysstat iftop htop zsh tree iotop dstat
 
 # Stop IPTABLES. we are using security groups
 service iptables stop

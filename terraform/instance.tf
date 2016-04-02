@@ -103,3 +103,25 @@ resource "aws_instance" "gluster-client" {
 
 }
 
+resource "aws_ebs_volume" "gluster01_brick1" {
+  availability_zone = "${aws_instance.gluster01.availability_zone}"
+  size = 30
+}
+
+resource "aws_ebs_volume" "gluster02_brick1" {
+  availability_zone = "${aws_instance.gluster02.availability_zone}"
+  size = 30
+}
+
+resource "aws_volume_attachment" "gluster01_brick1_attachment" {
+  device_name = "/dev/xvdh"
+  volume_id = "${aws_ebs_volume.gluster01_brick1.id}"
+  instance_id = "${aws_instance.gluster01.id}"
+}
+
+resource "aws_volume_attachment" "gluster02_brick1_attachment" {
+  device_name = "/dev/xvdh"
+  volume_id = "${aws_ebs_volume.gluster02_brick1.id}"
+  instance_id = "${aws_instance.gluster02.id}"
+}
+
