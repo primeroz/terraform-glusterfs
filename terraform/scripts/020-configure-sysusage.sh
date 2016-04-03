@@ -8,8 +8,10 @@ EOF
 cat > /usr/local/bin/memcommitted.sh << EOF
 #!/bin/bash
 
-sar -r | tail -n 2 | grep -v Average | awk '{print $(NF-1)" "$NF" 0"}'
+sar -r | tail -n 2 | grep -v Average | awk '{print \$(NF-1)" "\$NF" 0"}'
 EOF
+
+chmod a+x /usr/local/bin/memcommitted.sh
 
 if ! ( egrep -q memcommitted.sh /etc/sysusage.cfg ); then
 

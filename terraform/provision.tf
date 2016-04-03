@@ -38,7 +38,8 @@ resource "null_resource" "base_gluster-client" {
     provisioner "remote-exec" {
       inline = [
         "chmod a+x /tmp/scripts/*.sh",
-        "/usr/bin/sudo /tmp/001_base.sh"
+        "/usr/bin/sudo /tmp/001_base.sh",
+        "/usr/bin/sudo /tmp/scripts/020-configure-sysusage.sh"
       ]
     }
 
@@ -81,6 +82,7 @@ resource "null_resource" "base_gluster01" {
       inline = [
         "chmod a+x /tmp/scripts/*.sh",
         "/usr/bin/sudo /tmp/001_base.sh",
+        "/usr/bin/sudo /tmp/scripts/020-configure-sysusage.sh"
       ]
     }
 
@@ -123,6 +125,7 @@ resource "null_resource" "base_gluster02" {
       inline = [
         "chmod a+x /tmp/scripts/*.sh",
         "/usr/bin/sudo /tmp/001_base.sh",
+        "/usr/bin/sudo /tmp/scripts/020-configure-sysusage.sh"
       ]
     }
 
@@ -213,6 +216,26 @@ resource "null_resource" "configure_mrepo" {
     provisioner "remote-exec" {
       inline = [
         "/usr/bin/sudo /tmp/scripts/021-configure-mrepo.sh"
+      ]
+    }
+
+}
+
+resource "null_resource" "configure_sysbench" {
+    depends_on = ["null_resource.provision_gluster-client"]
+    triggers = {
+        instance_id = "${aws_instance.gluster-client.id}"
+    }
+    connection {
+        host = "${aws_instance.gluster-client.public_ip}"
+        user = "${var.ssh_username}"
+        key_file = "${var.ssh_keypath}"
+        agent = false
+    }
+
+    provisioner "remote-exec" {
+      inline = [
+        "/usr/bin/sudo /tmp/scripts/022-configure-sysbench.sh"
       ]
     }
 
